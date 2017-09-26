@@ -1,4 +1,6 @@
 import * as types from '../constants/actionTypes';
+import { push } from 'react-router-redux';
+import toastr from 'toastr';
 
 // Fetch list of recipes
 const fetchRecipesRequest = () => ({ type: types.FETCH_RECIPES_REQUEST });
@@ -77,6 +79,8 @@ export const createRecipe = recipe => (
     .then(response => {
       if (response.ok) {
         dispatch(createRecipeSuccess(recipe));
+        dispatch(push(response.headers.get('Location')));
+        toastr.success('Recipe created');
       } else {
         response.json().then(({ error })=> {
           dispatch(createRecipeFailure({
@@ -109,6 +113,8 @@ export const updateRecipe = recipe => (
     .then(response => {
       if (response.ok) {
         dispatch(updateRecipeSuccess(recipe));
+        dispatch(push(`/recipes/${recipe.id}`));
+        toastr.success('Recipe updated');
       } else {
         response.json().then(({ error })=> {
           dispatch(updateRecipeFailure({

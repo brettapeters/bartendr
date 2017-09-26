@@ -34,8 +34,17 @@ type ingredient struct {
 
 // valid checks if a Recipe is valid
 func (r recipe) valid() error {
-	if len(r.Name) < 0 {
+	if len(r.Name) <= 0 {
 		return errors.New("recipe name required")
+	}
+	if len(r.Ingredients) <= 0 {
+		return errors.New("ingredients required")
+	}
+	if len(r.Category) <= 0 {
+		return errors.New("category is required")
+	}
+	if len(r.Preparation) <= 0 {
+		return errors.New("preparation description is required")
 	}
 	return nil
 }
@@ -51,7 +60,7 @@ func (r *recipe) create(c context.Context) error {
 		return err
 	}
 	r.User = *u
-	_, err = datastore.Put(c, r.Key, r)
+	r.Key, err = datastore.Put(c, r.Key, r)
 	if err != nil {
 		return err
 	}

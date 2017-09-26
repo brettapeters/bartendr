@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import configureStore, { history } from './store/configureStore';
 import Root from './components/Root';
 import './offcanvas.css';
+import '../node_modules/toastr/build/toastr.min.css';
 
 // Get any server-provided data from the page
 const initialState = window.__INITIAL_STATE__;

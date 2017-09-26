@@ -5,7 +5,7 @@ export default function errors(state = initialState.error, action) {
   if (action.type.endsWith('_FAILURE')) {
     return action.error;
   }
-  if (action.type === CLEAR_ERROR) {
+  if (action.type === CLEAR_ERROR || action.type === '@@router/LOCATION_CHANGE') {
     return null;
   }
 

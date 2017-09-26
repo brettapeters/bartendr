@@ -1,35 +1,70 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import TextInput from './TextInput';
+import TextareaInput from './TextareaInput';
+import IngredientsInput from './IngredientsInput';
+import SpecialInput from './SpecialInput';
 
-const RecipeForm = ({ fieldChanged, onSave, recipe }) => (
+const RecipeForm = ({ fieldChanged, updateIngredients, updateSpecial, onSave, recipe }) => (
   <div className="container">
-    <h1>TODO: Complete this form component</h1>
-    <p>It should:</p>
-    <ul>
-      <li>Be nice to look at</li>
-      <li>Be user-friendly</li>
-      <li>Populate the form field with the right values if editing an existing recipe</li>
-      <li>Redirect on successful create/update</li>
-      <li>Give some useful feedback to the user that something happened</li>
-    </ul>
-    <p>Tips:</p>
-    <ul>
-      <li>
-        This form handles both editing and creating a recipe.
-        You shouldn't need to create two separate components to
-        get this done
-      </li>
-      <li>
-        Feel free to change the form's parent component <code>RecipeFormPage</code>
-      </li>
-    </ul>
+    <div className="py-4">
+      <h1 className="display-4">{recipe.id ? 'Edit' : 'New'} Recipe</h1>
+    </div>
+    <form className="form-group col-md-8" onSubmit={onSave}>
+      <TextInput
+        label="Name"
+        name="name"
+        value={recipe.name}
+        onChange={fieldChanged}
+      />
+
+      <TextInput
+        label="Category"
+        help="e.g. highball, sour, spirit-forward, tropical"
+        name="category"
+        value={recipe.category}
+        onChange={fieldChanged}
+      />
+
+      <TextInput
+        label="Glass"
+        help="What kind of glass is it served in?"
+        name="glass"
+        value={recipe.glass || ''}
+        onChange={fieldChanged}
+      />
+
+      <IngredientsInput ingredients={recipe.ingredients} updateIngredients={updateIngredients} />
+
+      <SpecialInput special={recipe.special} updateSpecial={updateSpecial} />
+
+      <TextInput
+        label="Garnish"
+        name="garnish"
+        value={recipe.garnish || ''}
+        onChange={fieldChanged}
+      />
+
+      <TextareaInput
+        label="Preparation"
+        name="preparation"
+        value={recipe.preparation}
+        onChange={fieldChanged}
+      />
+
+      <input className="btn btn-primary" type="submit" value="Save" />
+    </form>
   </div>
 );
 
 RecipeForm.propTypes = {
   fieldChanged: PropTypes.func.isRequired,
+  updateIngredients: PropTypes.func.isRequired,
+  updateSpecial: PropTypes.func.isRequired,
   onSave: PropTypes.func.isRequired,
   recipe: PropTypes.object.isRequired
 };
 
 export default RecipeForm;
+
+// special: [],

@@ -44,7 +44,7 @@ func handleRecipeGet(w http.ResponseWriter, r *http.Request, id string) {
 	// Decode the id into a datstore key
 	key, err := datastore.DecodeKey(id)
 	if err != nil {
-		respondErr(c, w, r, err, http.StatusBadRequest)
+		respondErr(c, w, r, err, http.StatusNotFound)
 		return
 	}
 	// Get the recipe from the datastore
@@ -69,7 +69,7 @@ func handleRecipePost(w http.ResponseWriter, r *http.Request) {
 	// Decode recipe into JSON from request body
 	err := json.NewDecoder(r.Body).Decode(&recipe)
 	if err != nil {
-		respondErr(c, w, r, err, http.StatusBadRequest)
+		respondErr(c, w, r, err, http.StatusNotFound)
 		return
 	}
 	// Check if the recipe is valid
@@ -84,7 +84,7 @@ func handleRecipePost(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Set Location header and respond with the newly created recipe
-	w.Header().Set("Location", "api/recipes/"+recipe.Key.Encode())
+	w.Header().Set("Location", "/recipes/"+recipe.Key.Encode())
 	respondJSON(c, w, r, recipe, http.StatusCreated)
 }
 
@@ -93,7 +93,7 @@ func handleRecipePut(w http.ResponseWriter, r *http.Request, id string) {
 	// Decode the id into a datstore key
 	key, err := datastore.DecodeKey(id)
 	if err != nil {
-		respondErr(c, w, r, err, http.StatusBadRequest)
+		respondErr(c, w, r, err, http.StatusNotFound)
 		return
 	}
 	var recipe recipe
@@ -131,7 +131,7 @@ func handleRecipeDelete(w http.ResponseWriter, r *http.Request, id string) {
 	// Decode the id into a datstore key
 	key, err := datastore.DecodeKey(id)
 	if err != nil {
-		respondErr(c, w, r, err, http.StatusBadRequest)
+		respondErr(c, w, r, err, http.StatusNotFound)
 		return
 	}
 	// Delete the recipe from the datastore
