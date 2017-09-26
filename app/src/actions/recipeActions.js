@@ -142,6 +142,8 @@ export const deleteRecipe = id => (
     .then(response => {
       if (response.ok) {
         dispatch(deleteRecipeSuccess(id));
+        dispatch(push('/'));
+        toastr.success('Recipe deleted');
       } else {
         response.json().then(({ error })=> {
           dispatch(deleteRecipeFailure({

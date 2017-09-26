@@ -24,6 +24,7 @@ type recipe struct {
 	Preparation string         `json:"preparation" datastore:",noindex"`
 	Rating      int            `json:"rating"`
 	User        user           `json:"user"`
+	PhotoURL    string         `json:"photoURL,omitempty"`
 }
 
 type ingredient struct {
@@ -37,11 +38,14 @@ func (r recipe) valid() error {
 	if len(r.Name) <= 0 {
 		return errors.New("recipe name required")
 	}
+	if len(r.Category) <= 0 {
+		return errors.New("category is required")
+	}
 	if len(r.Ingredients) <= 0 {
 		return errors.New("ingredients required")
 	}
-	if len(r.Category) <= 0 {
-		return errors.New("category is required")
+	if len(r.PhotoURL) <= 0 {
+		return errors.New("photo URL is required")
 	}
 	if len(r.Preparation) <= 0 {
 		return errors.New("preparation description is required")
@@ -81,7 +85,7 @@ func (r *recipe) update(c context.Context) error {
 		return err
 	}
 	// Check if the user is allowed to update the recipe
-	if recipe[0].User.ID != u.ID {
+	if recipe.User.ID != u.ID {
 		return errNotAllowed
 	}
 	// Copy the user ID from the current user
@@ -97,7 +101,7 @@ func (r *recipe) update(c context.Context) error {
 
 // getRecipe gets a single Recipe from the datastore.
 // It returns a slice so we always return an array from the api
-func getRecipe(c context.Context, key *datastore.Key) ([]*recipe, error) {
+func getRecipe(c context.Context, key *datastore.Key) (*recipe, error) {
 	var r recipe
 	err := datastore.Get(c, key, &r)
 	if err != nil {
@@ -105,7 +109,7 @@ func getRecipe(c context.Context, key *datastore.Key) ([]*recipe, error) {
 	}
 	r.Key = key
 	r.User.Key = datastore.NewKey(c, "User", r.User.ID, 0, nil)
-	return []*recipe{&r}, nil
+	return &r, nil
 }
 
 // deleteRecipe deletes a single recipe from the datastore
@@ -121,7 +125,7 @@ func deleteRecipe(c context.Context, key *datastore.Key) error {
 		return err
 	}
 	// Check if the user is allowed to delete the recipe
-	if r[0].User.ID != u.ID {
+	if r.User.ID != u.ID {
 		return errNotAllowed
 	}
 	// Delete the recipe
@@ -132,13 +136,13 @@ func deleteRecipe(c context.Context, key *datastore.Key) error {
 	return nil
 }
 
-// topRecipes returns the top 25 highest rated drink recipes
+// topRecipes returns the top 75 highest rated drink recipes
 func topRecipes(c context.Context) ([]*recipe, error) {
 	recipes := []*recipe{}
 	recipeKeys, err := datastore.NewQuery("Recipe").
 		Order("-Rating").
 		Order("-Created").
-		Limit(25).
+		Limit(75).
 		GetAll(c, &recipes)
 	if err != nil {
 		return nil, err
