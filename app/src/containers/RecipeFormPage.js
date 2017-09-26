@@ -13,7 +13,7 @@ class RecipeFormPage extends React.Component {
     super(props);
 
     this.state = {
-      recipe: Object.assign({}, props.recipe)
+      recipe: Object.assign({}, props.currentRecipe)
     };
 
     this.updateField = this.updateField.bind(this);
@@ -30,8 +30,17 @@ class RecipeFormPage extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.recipe.id != nextProps.recipe.id) {
-      this.setState({ recipe: Object.assign({}, nextProps.recipe) });
+    if (this.props.currentRecipe.id != nextProps.currentRecipe.id) {
+      this.setState({ recipe: Object.assign({}, nextProps.currentRecipe) });
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (this.props.error &&
+        this.props.error.code !== 404 &&
+        prevProps.error !== this.props.error) {
+      toastr.error(this.props.error.error);
+      this.props.actions.clearError();
     }
   }
 
@@ -69,8 +78,6 @@ class RecipeFormPage extends React.Component {
       if (error.code === 404) {
         return <ErrorPage error={this.props.error} />;
       }
-      toastr.error(error.error);
-      this.props.actions.clearError();
     }
     return (
       <RecipeForm
@@ -86,7 +93,7 @@ class RecipeFormPage extends React.Component {
 
 RecipeFormPage.propTypes = {
   actions: PropTypes.object.isRequired,
-  recipe: PropTypes.object.isRequired,
+  currentRecipe: PropTypes.object.isRequired,
   history: PropTypes.object.isRequired,
   match: PropTypes.object,
   error: PropTypes.object
@@ -100,10 +107,11 @@ const mapStateToProps = (state, ownProps) => {
     ingredients: [],
     special: [],
     garnish: '',
+    photoURL: '',
     preparation: ''
   };
   return {
-    recipe: ownProps.match.params.id && state.recipes[0] || initialRecipe,
+    currentRecipe: ownProps.match.params.id && state.currentRecipe || initialRecipe,
     error: state.error
   };
 };

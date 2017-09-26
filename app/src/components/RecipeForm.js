@@ -9,6 +9,7 @@ const RecipeForm = ({ fieldChanged, updateIngredients, updateSpecial, onSave, re
   <div className="container">
     <div className="py-4">
       <h1 className="display-4">{recipe.id ? 'Edit' : 'New'} Recipe</h1>
+      <hr />
     </div>
     <form className="form-group col-md-8" onSubmit={onSave}>
       <TextInput
@@ -45,6 +46,14 @@ const RecipeForm = ({ fieldChanged, updateIngredients, updateSpecial, onSave, re
         onChange={fieldChanged}
       />
 
+      <TextInput
+        label="Photo URL"
+        help="Paste in a link to an image"
+        name="photoURL"
+        value={recipe.photoURL}
+        onChange={fieldChanged}
+      />
+
       <TextareaInput
         label="Preparation"
         name="preparation"
@@ -66,5 +75,3 @@ RecipeForm.propTypes = {
 };
 
 export default RecipeForm;
-
-// special: [],
